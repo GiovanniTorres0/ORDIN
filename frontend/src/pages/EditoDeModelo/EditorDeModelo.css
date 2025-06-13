@@ -1,4 +1,72 @@
-/* src/pages/EditorDeModelo.css */
+/* src/pages/EditorDeModelo/EditorDeModelo.css */
+
+/* ==========================================================================
+   1. Layout Principal da Aplicação
+   ========================================================================== */
+.editor-container {
+  display: flex;
+  height: 100vh;
+  font-family: sans-serif;
+}
+
+.toolbox, .inspector {
+  width: 250px;
+  padding: 1rem;
+  background-color: #f7f7f7;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.inspector {
+  border-right: none;
+  border-left: 1px solid #ddd;
+}
+
+.canvas {
+  flex-grow: 1;
+  padding: 2rem;
+  background-color: #e9e9e9;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ==========================================================================
+   2. Estilos da Página e do Grid (Layout de Impressão)
+   ========================================================================== */
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.a4-page {
+  background: white;
+  width: 794px;
+  height: 1122px;
+  padding: 2cm;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.react-grid-layout {
+  background: transparent;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   3. Estilos dos Itens Arrastáveis
+   ========================================================================== */
+.grid-item-wrapper { }
+
 .grid-item-content {
   background: #f0f0f0;
   border: 1px solid #ddd;
@@ -8,6 +76,8 @@
   width: 100%;
   height: 100%;
   cursor: pointer;
+  overflow: hidden;
+  user-select: none;
 }
 
 .grid-item-content.selected {
@@ -15,53 +85,44 @@
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-.editor-container {
-  display: flex;
-  height: 100vh;
-}
-
-.toolbox, .inspector {
-  width: 200px;
-  padding: 1rem;
-  background-color: #f7f7f7;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
-}
-
-.inspector {
-  border-right: none;
-  border-left: 1px solid #ddd;
-}
-
-/* Modifique o .canvas para ser o fundo cinza */
-.canvas {
-  flex-grow: 1; /* <-- ESTA É A LINHA MAIS IMPORTANTE */
-  padding: 2rem;
-  background-color: #e9e9e9;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-}
-
-/* ESTILO DA NOVA FOLHA A4 */
-.a4-page {
-  background: white;
+/* ==========================================================================
+   4. Componentes de UI (Botões e Inputs)
+   ========================================================================== */
+.property-input {
   width: 100%;
-  max-width: 840px; /* Largura de uma folha A4 em proporção */
-  height: fit-content;
-  min-height: 1188px; /* Altura proporcional para a largura máxima */
-
-  /* A Mágica da Proporção A4 (210mm / 297mm) */
-  /* Comentado por enquanto para usar min-height, mas pode ser reativado */
-  /* aspect-ratio: 210 / 297; */
-
-  padding: 2cm; /* Margens de uma folha real */
-  box-shadow: 0 0 10px rgba(0,0,0,0.15);
-  box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.react-grid-layout {
-  /* O fundo do grid agora é transparente, pois a folha já é branca */
-  background: transparent;
-  min-height: 100%;
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #e0e0e0;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.delete-page-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 1.2rem;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.2s;
+}
+
+.delete-page-btn:hover {
+  background: #dc3545;
 }

@@ -21,6 +21,17 @@ export const saveTemplate = async (name, layout) => {
     console.error('Erro no serviço apiService:', error);
     throw error; // Re-lança o erro para o componente tratar
   }
-};
+}
 
-// No futuro, podemos adicionar aqui: getTemplates, deleteTemplate, etc.
+export const getTemplates = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/templates`);
+    if (!response.ok) {
+      throw new Error('Falha ao buscar os modelos.');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Erro no serviço apiService:', error);
+    throw error;
+  }
+};
