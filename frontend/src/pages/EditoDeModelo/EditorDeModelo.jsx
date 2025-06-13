@@ -1,11 +1,14 @@
 // src/pages/EditorDeModelo.jsx
 import React, { useState } from 'react';
-import GridLayout from 'react-grid-layout';
+// MUDANÇA 1: Corrigindo a importação. O componente principal é a exportação DEFAULT.
+import RGL, { WidthProvider } from 'react-grid-layout';
 import './EditorDeModelo.css';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { saveTemplate } from '../../services/apiService'; // Verifique o caminho se necessário
+import { saveTemplate } from '../../services/apiService';
 
+// MUDANÇA 2: Usamos o RGL (React-Grid-Layout) que importamos corretamente.
+const ResponsiveGridLayout = WidthProvider(RGL);
 
 const EditorDeModelo = () => {
     const [items, setItems] = useState([]);
@@ -25,25 +28,17 @@ const EditorDeModelo = () => {
     };
 
     const handlePropertyChange = (property, value) => {
-        const newItems = items.map(item => {
-            if (item.i === selectedItemId) {
-                return { ...item, [property]: value };
-            }
-            return item;
-        });
+        const newItems = items.map(item =>
+            item.i === selectedItemId ? { ...item, [property]: value } : item
+        );
         setItems(newItems);
     };
 
     const handleSave = async () => {
-        if (!templateName) {
-            alert('Por favor, dê um nome ao seu modelo.');
+        if (!templateName || items.length === 0) {
+            alert('Por favor, preencha o nome do modelo e adicione itens ao layout.');
             return;
         }
-        if (items.length === 0) {
-            alert('Adicione pelo menos um item ao layout antes de salvar.');
-            return;
-        }
-
         try {
             await saveTemplate(templateName, items);
             alert(`Modelo "${templateName}" salvo com sucesso!`);
@@ -51,7 +46,7 @@ const EditorDeModelo = () => {
             alert('Ocorreu um erro ao salvar o modelo.');
         }
     };
-
+    
     const selectedItem = items.find(item => item.i === selectedItemId);
 
     const layout = items.map(item => ({
@@ -80,46 +75,40 @@ const EditorDeModelo = () => {
             <div
                 className="canvas"
                 onClick={(e) => {
-                    // A mágica acontece aqui: .closest() procura o elemento clicado e seus "pais".
-                    // Se ele encontrar um elemento com a classe .grid-item-wrapper, significa que o clique foi DENTRO de um item.
-                    if (e.target.closest('.grid-item-wrapper')) {
-                        return; // Se foi dentro, não faz nada.
-                    }
-                    // Se não encontrou, o clique foi no fundo do canvas.
-                    setSelectedItemId(null); // Agora sim, pode desselecionar.
+                    if (e.target.closest('.grid-item-wrapper')) return;
+                    setSelectedItemId(null);
                 }}
             >
-                <GridLayout
-                    className="layout"
-                    layout={layout}
-                    cols={12}
-                    rowHeight={30}
-                    width={1200}
-                    onLayoutChange={(newLayout) => {
-                        const newItems = items.map(originalItem => {
-                            const layoutItem = newLayout.find(l => l.i === originalItem.i);
-                            return { ...originalItem, ...layoutItem };
-                        });
-                        setItems(newItems);
-                    }}
-                    // Adicionamos estes handlers para garantir a seleção durante o arrasto
-                    onDragStart={(layout, oldItem) => setSelectedItemId(oldItem.i)}
-                    onResizeStart={(layout, oldItem) => setSelectedItemId(oldItem.i)}
-                >
-                    {items.map(item => (
-                        // MUDANÇA PRINCIPAL: A ESTRUTURA DE WRAPPER DIV
-                        <div key={item.i} className="grid-item-wrapper">
-                            <div
-                                className={item.i === selectedItemId ? 'grid-item-content selected' : 'grid-item-content'}
-                                onMouseDown={(e) => {
-                                    setSelectedItemId(item.i);
-                                }}
-                            >
-                                <span className="text">{item.content}</span>
+                <div className="a4-page">
+                    <ResponsiveGridLayout
+                        className="layout"
+                        layout={layout}
+                        cols={12}
+                        rowHeight={30}
+                        measureBeforeMount={false}
+                        useCSSTransforms={true}
+                        onLayoutChange={(newLayout) => {
+                            const newItems = items.map(originalItem => {
+                                const layoutItem = newLayout.find(l => l.i === originalItem.i);
+                                return { ...originalItem, ...layoutItem };
+                            });
+                            setItems(newItems);
+                        }}
+                        onDragStart={(layout, oldItem) => setSelectedItemId(oldItem.i)}
+                        onResizeStart={(layout, oldItem) => setSelectedItemId(oldItem.i)}
+                    >
+                        {items.map(item => (
+                            <div key={item.i} className="grid-item-wrapper">
+                                <div
+                                    className={item.i === selectedItemId ? 'grid-item-content selected' : 'grid-item-content'}
+                                    onMouseDown={() => setSelectedItemId(item.i)}
+                                >
+                                    <span className="text">{item.content}</span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </GridLayout>
+                        ))}
+                    </ResponsiveGridLayout>
+                </div>
             </div>
 
             <div className="inspector">
