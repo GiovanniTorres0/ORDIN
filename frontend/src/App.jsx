@@ -1,11 +1,12 @@
 // src/App.jsx
 
-import TemplateManager from './pages/TemplateManager';
+import TemplateManager from './pages/TemplateManager/TemplateManager';
+import EditorDeModelo from './pages/EditoDeModelo/EditorDeModelo';
 
 function App() {
   return (
     <div>
-      <TemplateManager />
+      <EditorDeModelo />
     </div>
   );
 }
